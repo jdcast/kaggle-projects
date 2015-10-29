@@ -1,5 +1,4 @@
-
-Repository for holding kaggle projects
+# Repository for holding kaggle projects
 =============
 
 kaggle-projects
