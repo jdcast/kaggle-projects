@@ -1,6 +1,13 @@
-# kaggle-projects
+
 Repository for holding kaggle projects
 =============
+
+kaggle-projects
+============
+
+* https://www.kaggle.com/c/titanic/details/getting-started-with-python
+* https://www.kaggle.com/c/titanic/details/getting-started-with-python-ii
+* https://www.kaggle.com/c/titanic/details/getting-started-with-random-forests
 
 Requirements
 ============
