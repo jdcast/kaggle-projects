@@ -29,7 +29,7 @@ git workflow
 Tools (following is only for linux/os-x: vim + tmux + git)
 =====
 
-* (expansive unix command cheat sheet here: https://ubuntudanmark.dk/filer/fwunixref.pdf, be careful with chmod :P)
+* expansive unix command cheat sheet here: https://ubuntudanmark.dk/filer/fwunixref.pdf, be careful with chmod :P
 * vundle (plugin manager): https://github.com/gmarik/Vundle.vim 
 * example of using vundle: https://github.com/kchmck/vim-coffee-script#install-using-vundle
 * support for vim + tmux: http://fideloper.com/mac-vim-tmux (follow all steps) 
