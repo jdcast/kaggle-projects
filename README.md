@@ -29,8 +29,6 @@ git workflow
 Tools (following is only for linux/os-x: vim + tmux + git)
 =====
 
-* handy unix/vim commands for file/directory management/traversal:
-`cd <directory>`, `ls <directory>`,`vim <new_file_name.with_extension>`
 * (expansive unix command cheat sheet here: https://ubuntudanmark.dk/filer/fwunixref.pdf, be careful with chmod :P)
 * vundle (plugin manager): https://github.com/gmarik/Vundle.vim 
 * example of using vundle: https://github.com/kchmck/vim-coffee-script#install-using-vundle
