@@ -31,6 +31,29 @@ git workflow
 * commit messages: present tense and begin with a capital: 'Add cookies to jar'
 * when your branch is ready, `git push` and create a pull request for it on github
 
+sample git workflow
+=====
+* open laptop to start work
+* git pull (on master branch)
+* git checkout -b feature/my-new-feature-branch (feature branch)
+* do some work
+* git add -A
+* git commit -am "<Descriptive message starting with capitalized verb>"
+* git checkout master
+* git pull
+* git checkout feature/my-new-feature-branch
+* git rebase master (plays the feature branch on top of the master branch so that they are compatible when trying to merge later)
+* now resolve any conflicts that might occur in the rebase 
+* git pull (if someone else is using your feature branch otherwise not necessary)
+* git push -f
+* go to github
+* submit PR for feature branch
+* we review
+* we clean up if necessary
+* we final okay
+* go to github and merge 
+* delete feature branch (two commands needed here that I forget at the moment but they are easy ones)
+
 Tools (following is only for linux/os-x: vim + tmux + git)
 =====
 
