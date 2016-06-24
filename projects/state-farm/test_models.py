@@ -9,6 +9,7 @@ from sklearn import tree
 import csv
 from sklearn import naive_bayes
 from sklearn import svm
+import config
 
 def get_X_and_Y(input_path):
     num_samples = 0
@@ -138,9 +139,9 @@ def create_kaggle_submission_for_test_features(test_features_doc, test_submissio
 
 if __name__ == "__main__":
     start_time = time.time()
-    input_path = "/media/sf_data_science_vm/state_farm/features/train/"
-    X_filename = 'statefarm_X.npy'
-    Y_filename = 'statefarm_Y.npy'
+    input_path = config.test_models_config['input_path']#"/media/sf_data_science_vm/state_farm/features/train/"
+    X_filename = config.test_models_config['x_npy_filename']#'statefarm_X.npy'
+    Y_filename = config.test_models_config['y_npy_filename']#'statefarm_Y.npy'
 
     # GET X and Y from json object files:
     X, Y = get_X_and_Y(input_path)
@@ -202,8 +203,8 @@ if __name__ == "__main__":
     # print "MEAN %d-FOLD CROSS VALIDATION SCORE = %f" % (num_folds, mean_cross_val_score)
 
     # OUTPUT TEST RESULTS FOR KAGGLE:
-    test_features_doc = '/media/sf_data_science_vm/state_farm/features/test/test_features'
-    test_submission_filename = '/media/sf_data_science_vm/state_farm/submissions/test_submission.csv'
+    test_features_doc = config.test_models_config[' test_features_doc']#'/media/sf_data_science_vm/state_farm/features/test/test_features'
+    test_submission_filename = config.test_models_config['test_submission_filename']#'/media/sf_data_science_vm/state_farm/submissions/test_submission.csv'
     create_kaggle_submission_for_test_features(test_features_doc, test_submission_filename, model)
 
     print "------------------ %f minutes elapsed ------------------------" % ((time.time() - start_time)/60.0)

@@ -50,14 +50,16 @@ def resize_image_and_get_full_gabor_features(cstring_image_obj, num_rows, num_co
 
 def get_hog_features(cstring_image_obj):
     # file_full_path = cstring_image_obj.read()
-    bin_n = 16
+    bin_n = 36
     img = skimage_io.imread(cstring_image_obj)
     # img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+    ## get 1st derivative
     gx = cv2.Sobel(img, cv2.CV_32F, 1, 0)
     gy = cv2.Sobel(img, cv2.CV_32F, 0, 1)
     mag, ang = cv2.cartToPolar(gx, gy)
 
-    # quantizing binvalues in (0...16)
+    # quantizing binvalues in (0...bin_n)
     bins = np.int32(bin_n*ang/(2*np.pi))
 
     # Divide to 4 sub-squares
