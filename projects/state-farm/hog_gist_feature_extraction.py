@@ -66,10 +66,30 @@ def get_hog_features(cstring_image_obj):
     bin_cells = bins[:10,:10], bins[10:,:10], bins[:10,10:], bins[10:,10:]
     mag_cells = mag[:10,:10], mag[10:,:10], mag[:10,10:], mag[10:,10:]
     hists = [np.bincount(b.ravel(), m.ravel(), bin_n) for b, m in zip(bin_cells, mag_cells)]
-    hist = np.hstack(hists)
-    print 'HOG feature vector shape:'
-    print hist.shape
-    return hist
+    hist_1 = np.hstack(hists)
+    print 'HOG 1st derivative feature vector shape:'
+    print hist_1.shape
+
+    ## get 2nd derivative
+    gx = cv2.Sobel(img, cv2.CV_32F, 2, 0)
+    gy = cv2.Sobel(img, cv2.CV_32F, 0, 2)
+    mag, ang = cv2.cartToPolar(gx, gy)
+
+    # quantizing binvalues in (0...bin_n)
+    bins = np.int32(bin_n * ang / (2 * np.pi))
+
+    # Divide to 4 sub-squares
+    bin_cells = bins[:10, :10], bins[10:, :10], bins[:10, 10:], bins[10:, 10:]
+    mag_cells = mag[:10, :10], mag[10:, :10], mag[:10, 10:], mag[10:, 10:]
+    hists = [np.bincount(b.ravel(), m.ravel(), bin_n) for b, m in zip(bin_cells, mag_cells)]
+    hist_2 = np.hstack(hists)
+    print 'HOG 2nd derivative feature vector:'
+    print hist_2.shape
+
+    hist_final = np.hstack((hist_1,hist_2))
+    print 'HOG final feature vector:'
+    print hist_final.shape
+    return hist_final
 
 def serialize(subdir, file_i):
     file_full_path = os.path.join(subdir, file_i)

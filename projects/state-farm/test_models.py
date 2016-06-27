@@ -51,7 +51,7 @@ def get_X_and_Y(input_path):
 def create_submission_file(filename_vec, y_hat, test_submission_filename):
     with open(test_submission_filename, 'w') as outfd:
         csv_writer = csv.writer(outfd, delimiter=',')
-        header = ['img','c0','c1','c2','c3','c4','c5','c6','c7','c8','c9']
+        header = config.test_models_config['submission_file_csv_header']#['img','c0','c1','c2','c3','c4','c5','c6','c7','c8','c9']
         csv_writer.writerow(header)
         # row_template = ['','0','0','0','0','0','0','0','0','0','0']
         for i in range(len(y_hat)):
@@ -61,7 +61,7 @@ def create_submission_file(filename_vec, y_hat, test_submission_filename):
             # print "label:"
             label = int(y_hat[i])
             # print label
-            row_i_arr = ['','0','0','0','0','0','0','0','0','0','0']
+            row_i_arr = config.test_models_config['submission_file_csv_row']#'','0','0','0','0','0','0','0','0','0','0']
             row_i_arr[label + 1] = "1.0"
             row_i_arr[0] = filename_i
             # print row_i_arr
@@ -74,7 +74,7 @@ def div_by_2(x):
 def create_submission_file_probabilities(filename_vec, probabilities_matrix, y_hat, test_submission_filename):
     with open(test_submission_filename, 'w') as outfd:
         csv_writer = csv.writer(outfd, delimiter=',')
-        header = ['img','c0','c1','c2','c3','c4','c5','c6','c7','c8','c9']
+        header = config.test_models_config['submission_file_csv_header']#['img','c0','c1','c2','c3','c4','c5','c6','c7','c8','c9']
         csv_writer.writerow(header)
         # row_template = ['','0','0','0','0','0','0','0','0','0','0']
         for i in range(len(probabilities_matrix)):
@@ -120,8 +120,8 @@ def create_kaggle_submission_for_test_features(test_features_doc, test_submissio
             filename_vec = np.vstack((filename_vec, filename_vec_i))
         num_samples += 1
     fd.close()
-    X_test_filename = 'X_test_submission.npy'
-    filenames_vec_test = 'filenames_test_submission.npy'
+    X_test_filename = config.test_models_config['x_test_submission_npy_filename']#'X_test_submission.npy'
+    filenames_vec_test = config.test_models_config['filenames_test_submission_npy_filename']#'filenames_test_submission.npy'
     np.save(X_test_filename, X_test)
     np.save(filenames_vec_test, filename_vec)
     # X_test_filename = 'X_test_submission.npy'
@@ -203,7 +203,7 @@ if __name__ == "__main__":
     # print "MEAN %d-FOLD CROSS VALIDATION SCORE = %f" % (num_folds, mean_cross_val_score)
 
     # OUTPUT TEST RESULTS FOR KAGGLE:
-    test_features_doc = config.test_models_config[' test_features_doc']#'/media/sf_data_science_vm/state_farm/features/test/test_features'
+    test_features_doc = config.test_models_config['test_features_doc']#'/media/sf_data_science_vm/state_farm/features/test/test_features'
     test_submission_filename = config.test_models_config['test_submission_filename']#'/media/sf_data_science_vm/state_farm/submissions/test_submission.csv'
     create_kaggle_submission_for_test_features(test_features_doc, test_submission_filename, model)
 
