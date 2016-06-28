@@ -22,7 +22,8 @@ from pysparkling import Context
 import multiprocessing
 from functools import partial
 
-
+from skimage.feature import hog
+from skimage import color, data
 
 def image_processing_cstringio(cstring_object, num_rows, num_cols):
     resized_filename = resize_image.resize_image_ocr_cstringio(cstring_object, num_rows, num_cols)
@@ -48,7 +49,29 @@ def resize_image_and_get_full_gabor_features(cstring_image_obj, num_rows, num_co
     print gabor_features_vec.shape
     return gabor_features_vec
 
-def get_hog_features(cstring_image_obj):
+def get_hog_features_ski_image(cstring_image_obj):
+    img = skimage_io.imread(cstring_image_obj)
+    img = color.rgb2gray(img)
+
+    ## For testing (from example in docs)
+    # astro_img = color.rgb2gray(data.astronaut())
+    # fd = hog(astro_img, orientations=9, pixels_per_cell=(6, 6), cells_per_block=(3, 3), transform_sqrt=False,
+    #          visualise=False)  #, feature_vector=True, normalise=None)
+    # print 'astro image shape:'
+    # print astro_img.shape
+    # print 'astro HOG feature vector shape'
+    # print fd.shape
+
+    print 'Image shape:'
+    print img.shape
+    hist = hog(img, orientations=36, pixels_per_cell=(220, 220),
+               cells_per_block=(1, 1), visualise=False, transform_sqrt=False,
+               feature_vector=True, normalise=None)
+    print 'HOG feature vector shape'
+    print hist.shape
+    return hist
+
+def get_hog_features_open_cv(cstring_image_obj):
     # file_full_path = cstring_image_obj.read()
     bin_n = 36
     img = skimage_io.imread(cstring_image_obj)
@@ -119,11 +142,17 @@ def dump(x):
 # Returns hog and gist feature vector as a list
 # If features cannot be extracted from image, return
 # sentinel vector - a list of -1's, [-1, -1, ..., -1]
-def get_hog_and_gist_feats(bytes_str, num_rows, num_cols):
+def get_hog_and_gist_feats(bytes_str, num_rows, num_cols, hog_method):
     img_data = str(base64.b64decode(bytes_str))
     cstring_image_obj = cStringIO.StringIO(img_data)
     try:
-        hog_features_vec = get_hog_features(cstring_image_obj)
+        hog_features_vec = []
+        if hog_method == 'ski_image':
+            hog_features_vec = get_hog_features_ski_image(cstring_image_obj)
+        elif hog_method == 'open_cv':
+            hog_features_vec = get_hog_features_open_cv(cstring_image_obj)
+        else:  # default case, just use open_cv
+            hog_features_vec = get_hog_features_open_cv(cstring_image_obj)
         gabor_features_vec = resize_image_and_get_full_gabor_features(cstring_image_obj, num_rows, num_cols)
         gabor_features_vec = gabor_features_vec.reshape(gabor_features_vec.shape[1], 1)
         supp_feat_vec = np.vstack((gabor_features_vec, hog_features_vec.reshape(hog_features_vec.shape[0], 1)))
@@ -139,12 +168,12 @@ def get_hog_and_gist_feats(bytes_str, num_rows, num_cols):
         return sentinel_vec.tolist()
 
 
-def get_features(image_json_txt_obj):
+def get_features(hog_method, image_json_txt_obj):
     print '---------------PROCESSING IMAGE----------------'
     image_json_dict = json.loads(image_json_txt_obj)
     bytes_str = str(image_json_dict["bytes"])
     num_rows = num_cols = 100
-    features = get_hog_and_gist_feats(bytes_str, num_rows, num_cols)
+    features = get_hog_and_gist_feats(bytes_str, num_rows, num_cols, hog_method)
     image_json_dict["features"] = features
     # debugging:
     image_json_dict["bytes"] = ""
@@ -166,6 +195,9 @@ def run_feature_extraction():
     default_path = 'target_images'
     parser.add_argument("--input_dir", help="input directory", default=default_path)
     parser.add_argument("--output", help="output file", default='image_features')
+    parser.add_argument("--hog_method",
+                        help="'ski_image' to use ski-image hog function, 'open_cv' to use open-cv 1st/2nd derivatives method",
+                        default='open_cv')
     args = parser.parse_args()
     # serialize and put all images in rdd:
     # use json schema:
@@ -185,7 +217,8 @@ def run_feature_extraction():
     num_parts = 4
     rdd = sc.parallelize(data_arr, num_parts)
     # submit image rdd to processing
-    rdd_features = rdd.map(get_features).coalesce(1)
+    func = partial(get_features, args.hog_method)
+    rdd_features = rdd.map(func).coalesce(1)
     # save as txt file:
     rdd_features.map(dump).saveAsTextFile(args.output)
     print "------------------ %f minutes elapsed ------------------------" % ((time.time() - start_time)/60.0)
