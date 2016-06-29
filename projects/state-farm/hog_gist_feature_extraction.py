@@ -25,6 +25,8 @@ from functools import partial
 from skimage.feature import hog
 from skimage import color, data
 
+numImgsProcessed = 0
+
 def image_processing_cstringio(cstring_object, num_rows, num_cols):
     resized_filename = resize_image.resize_image_ocr_cstringio(cstring_object, num_rows, num_cols)
 
@@ -67,8 +69,19 @@ def get_hog_features_ski_image(cstring_image_obj):
     hist = hog(img, orientations=36, pixels_per_cell=(220, 220),
                cells_per_block=(1, 1), visualise=False, transform_sqrt=False,
                feature_vector=True, normalise=None)
+    #hist = hog(img, orientations=9, pixels_per_cell=(6, 6),
+    #           cells_per_block=(3, 3), visualise=False, transform_sqrt=False,
+    #           feature_vector=True, normalise=None)
     print 'HOG feature vector shape'
     print hist.shape
+    global numImgsProcessed
+    numImgsProcessed += 1
+    print 'Image number:'
+    print numImgsProcessed
+    print 'HOG feature vector size bytes:'
+    print hist.nbytes
+    print 'HOG feature vector type:'
+    print type(hist)
     return hist
 
 def get_hog_features_open_cv(cstring_image_obj):
