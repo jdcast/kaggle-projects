@@ -10,3 +10,6 @@
 
 #ignore bytcode compilation of each python file
 *.pyc
+
+#ignore xml files (pycharm creates these for projects)
+*.xml
