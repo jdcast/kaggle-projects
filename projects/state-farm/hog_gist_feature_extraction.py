@@ -67,7 +67,7 @@ def get_hog_features_ski_image(cstring_image_obj):
     print 'Image shape:'
     print img.shape
     hist = hog(img, orientations=36, pixels_per_cell=(220, 220),
-               cells_per_block=(1, 1), visualise=False, transform_sqrt=False,
+               cells_per_block=(1, 1), visualise=False, transform_sqrt=True,
                feature_vector=True, normalise=None)
     #hist = hog(img, orientations=9, pixels_per_cell=(6, 6),
     #           cells_per_block=(3, 3), visualise=False, transform_sqrt=False,
@@ -227,12 +227,14 @@ def run_feature_extraction():
     # conf = SparkConf().setAppName("HOG and GIST ETL")
     # sc = SparkContext(conf=conf)
 
-    num_parts = 4
+    num_parts = 100
     rdd = sc.parallelize(data_arr, num_parts)
     # submit image rdd to processing
     func = partial(get_features, args.hog_method)
-    rdd_features = rdd.map(func).coalesce(1)
+    #rdd_features = rdd.map(func).coalesce(1)
+    rdd_features = rdd.mapPartitions(func, True)
     # save as txt file:
+    #rdd_features.map(dump).saveAsTextFile(args.output)
     rdd_features.map(dump).saveAsTextFile(args.output)
     print "------------------ %f minutes elapsed ------------------------" % ((time.time() - start_time)/60.0)
 

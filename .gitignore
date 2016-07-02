@@ -4,6 +4,7 @@
 #ignore swap files
 *.swp
 *.swo
+~*.*
 
 #ignore npy files
 *.npy
