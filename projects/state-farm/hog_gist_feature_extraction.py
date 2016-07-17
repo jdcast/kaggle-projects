@@ -99,8 +99,14 @@ def get_hog_features_open_cv(cstring_image_obj):
     bins = np.int32(bin_n*ang/(2*np.pi))
 
     # Divide to 4 sub-squares
-    bin_cells = bins[:10,:10], bins[10:,:10], bins[:10,10:], bins[10:,10:]
-    mag_cells = mag[:10,:10], mag[10:,:10], mag[:10,10:], mag[10:,10:]
+    #bin_cells = bins[:10,:10], bins[10:,:10], bins[:10,10:], bins[10:,10:]
+    #mag_cells = mag[:10,:10], mag[10:,:10], mag[:10,10:], mag[10:,10:]
+    row_bound_1 = (num_rows/2) + int(0.1*(num_rows/2))
+    row_bound_2 = (num_rows/2) - int(0.1*(num_rows/2))
+    col_bound_1 = (num_cols/2) + int(0.1*(num_cols/2))
+    col_bound_2 = (num_cols/2) - int(0.1*(num_cols/2))
+    bin_cells = bins[:row_bound_1, :col_bound_1], bins[row_bound_2:, :col_bound_1], bins[:row_bound_1, col_bound_2:], bins[row_bound_2:, col_bound_2:]
+    mag_cells = mag[:row_bound_1, :col_bound_1], mag[row_bound_2:, :col_bound_1], mag[:row_bound_1, col_bound_2:], mag[row_bound_2:, col_bound_2:]
     hists = [np.bincount(b.ravel(), m.ravel(), bin_n) for b, m in zip(bin_cells, mag_cells)]
     hist_1 = np.hstack(hists)
     print 'HOG 1st derivative feature vector shape:'
@@ -115,8 +121,10 @@ def get_hog_features_open_cv(cstring_image_obj):
     bins = np.int32(bin_n * ang / (2 * np.pi))
 
     # Divide to 4 sub-squares
-    bin_cells = bins[:10, :10], bins[10:, :10], bins[:10, 10:], bins[10:, 10:]
-    mag_cells = mag[:10, :10], mag[10:, :10], mag[:10, 10:], mag[10:, 10:]
+    #bin_cells = bins[:10, :10], bins[10:, :10], bins[:10, 10:], bins[10:, 10:]
+    #mag_cells = mag[:10, :10], mag[10:, :10], mag[:10, 10:], mag[10:, 10:]
+    bin_cells = bins[:row_bound_1, :col_bound_1], bins[row_bound_2:, :col_bound_1], bins[:row_bound_1, col_bound_2:], bins[row_bound_2:, col_bound_2:]
+    mag_cells = mag[:row_bound_1, :col_bound_1], mag[row_bound_2:, :col_bound_1], mag[:row_bound_1, col_bound_2:], mag[row_bound_2:, col_bound_2:]
     hists = [np.bincount(b.ravel(), m.ravel(), bin_n) for b, m in zip(bin_cells, mag_cells)]
     hist_2 = np.hstack(hists)
     print 'HOG 2nd derivative feature vector:'
